@@ -2,7 +2,7 @@
 
 This Python web app is a simple restaurant review application built with the [Flask](https://flask.palletsprojects.com/en/2.1.x/) framework. The web app stores application data in PostgreSQL with environment variables defining the connection info.
 
-This repo was created to be built to a Docker image and run as a container instance in [Azure Container Apps](https://azure.microsoft.com/services/container-apps/). For more information, see the tutorial [TBD][TBD].
+This repo was created to be built to a Docker image and run as a container instance in [Azure Container Apps](https://azure.microsoft.com/services/container-apps/). For more information, see the tutorial [Deploy a Python web app on Azure Container Apps with GitHub Actions][https://learn.microsoft.com/azure/developer/python/tutorial-deploy-python-web-app-azure-container-apps-01].
 
 This Python web app repo can also be used in other ways:
 
@@ -23,7 +23,7 @@ This Python web app repo can also be used in other ways:
 
 If you need an Azure account, you can [create on for free](https://azure.microsoft.com/free/).
 
-A Django sample application with similar functionality is at **TBD**.
+A Django sample application with similar functionality is at https://github.com/Azure-Samples/msdocs-python-django-azure-container-apps.
 
 ## Requirements
 
@@ -40,7 +40,7 @@ The [requirements.txt](./requirements.txt) has the following packages:
 | [python-dotenv](https://pypi.org/project/python-dotenv/) | Read key-value pairs from .env file and set them as environment variables. In this sample app, environment variables describe how to connect to the database and storage resources. Because managed identity is used no sensitive information is included in environment variables. <br><br> Flask's [dotenv support](https://flask.palletsprojects.com/en/2.1.x/cli/#environment-variables-from-dotenv) sets environment variables automatically from an `.env` file. |
 | [flask_wtf](https://pypi.org/project/Flask-WTF/) | Form rendering, validation, and CSRF protection for Flask with WTForms. Uses CSRFProtect extension. |
 
-The steps to do this are covered more completely in the **TBD** tutorial. Briefly, here are the steps:
+The steps to do this are covered more completely in the tutorial [Deploy a Python web app on Azure Container Apps with GitHub Actions][https://learn.microsoft.com/azure/developer/python/tutorial-deploy-python-web-app-azure-container-apps-01]. Briefly, here are the steps:
 
 1. Fork and then clone locally.
 1. Build a container image from the repo.
