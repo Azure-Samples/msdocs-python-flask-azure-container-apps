@@ -1,4 +1,4 @@
-# Deploy a Python (Django) app to Azure to Azure Containers Apps
+# Deploy a Python (Flask) app to Azure to Azure Containers Apps
 
 This Python web app is a simple restaurant review application built with the [Flask](https://flask.palletsprojects.com/en/2.1.x/) framework. The web app stores application data in PostgreSQL with environment variables defining the connection info.
 
