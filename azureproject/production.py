@@ -1,7 +1,9 @@
 import os
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'flask-insecure-7ppocbnx@w71dcuinn*t^_mzal(t@o01v3fee27g%rg18fc5d@'
+# Use this py command to create secret 
+# python -c 'import secrets; print(secrets.token_hex())'
+SECRET_KEY = os.getenv('AZURE_SECRET_KEY')
 
 # Configure allowed host names that can be served and trusted origins for Azure Container Apps.
 ALLOWED_HOSTS = ['.azurecontainerapps.io'] if 'RUNNING_IN_PRODUCTION' in os.environ else []

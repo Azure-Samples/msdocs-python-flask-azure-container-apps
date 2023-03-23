@@ -6,6 +6,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 DEBUG = True
 
+SECRET_KEY = os.getenv('LOCAL_SECRET_KEY')
+
 # Configure database connection for remote PostgreSQL instance.
 if 'USE_REMOTE_POSTGRESQL' in os.environ:
     DBHOST=os.environ['AZURE_POSTGRESQL_HOST']
