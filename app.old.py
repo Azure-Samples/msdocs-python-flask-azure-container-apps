@@ -5,8 +5,6 @@ from flask_wtf.csrf import CSRFProtect
 from datetime import datetime
 import os
 import uuid
-from azureproject.get_conn import get_conn
-
 
 from requests import RequestException
 
@@ -25,8 +23,8 @@ else:
 
 with app.app_context():
     app.config.update(
+        SQLALCHEMY_DATABASE_URI=app.config.get('DATABASE_URI'),
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
-        SQLALCHEMY_DATABASE_URI=get_conn(),
     )
 
 # Initialize the database connection

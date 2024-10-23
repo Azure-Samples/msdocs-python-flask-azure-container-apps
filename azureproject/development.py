@@ -6,27 +6,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 DEBUG = True
 
-SECRET_KEY = os.getenv('LOCAL_SECRET_KEY')
-
-# Configure database connection for remote PostgreSQL instance.
-if 'USE_REMOTE_POSTGRESQL' in os.environ:
-    DBHOST=os.environ['AZURE_POSTGRESQL_HOST']
-    DBNAME=os.environ['AZURE_POSTGRESQL_DATABASE']
-    DBUSER=os.environ['AZURE_POSTGRESQL_USERNAME']
-    DBPASS=os.environ['AZURE_POSTGRESQL_PASSWORD']
+if not 'AZURE_POSTGRESQL_CONNECTIONSTRING' in os.environ:
+    DATABASE_URI = 'postgresql+psycopg2://{dbuser}:{dbpass}@{dbhost}/{dbname}'.format(
+        dbuser=os.environ['DBUSER'],
+        dbpass='PASSWORDORTOKEN',
+        dbhost=os.environ['DBHOST'],
+        dbname=os.environ['DBNAME']
+    )
 else:
-    # Local to instance settings.
-    DBHOST=os.environ['LOCAL_HOST']
-    DBNAME=os.environ['LOCAL_DATABASE']
-    DBUSER=os.environ['LOCAL_USERNAME']
-    DBPASS=os.environ['LOCAL_PASSWORD']
+    conn_str = os.environ['AZURE_POSTGRESQL_CONNECTIONSTRING']
+    conn_str_params = {pair.split('=')[0]: pair.split('=')[1] for pair in conn_str.split(' ')}
 
-DATABASE_URI = 'postgresql+psycopg2://{dbuser}:{dbpass}@{dbhost}/{dbname}'.format(
-    dbuser=DBUSER,
-    dbpass=DBPASS,
-    dbhost=DBHOST,
-    dbname=DBNAME
-)
+    DATABASE_URI = 'postgresql+psycopg2://{dbuser}:{dbpass}@{dbhost}/{dbname}'.format(
+        dbuser=conn_str_params['user'],
+        dbpass='PASSWORDORTOKEN',
+        dbhost=conn_str_params['host'],
+        dbname=conn_str_params['dbname']
+    )
 
 TIME_ZONE = 'UTC'
 
