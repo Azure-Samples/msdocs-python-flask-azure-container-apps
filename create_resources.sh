@@ -97,7 +97,7 @@ echo "INFO:: Completed creating database restaurants_reviews on PostgreSQL serve
 
 az identity create \
    --name my-ua-managed-id \
-   --resource-group pythoncontainer-rg
+   --resource-group $RESOURCE_GROUP
 
 # Add user assigned managed identity as role on server (requires rdbms-connect extension for token)
 
