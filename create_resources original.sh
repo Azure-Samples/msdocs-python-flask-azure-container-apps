@@ -3,13 +3,6 @@
 # This script creates the resources used in the tutorial https://learn.microsoft.com/azure/developer/python/tutorial-deploy-python-web-app-azure-container-apps-01
 # Make sure you are logged in to Azure. If unsure, run "az login" before using this script.
 
-# Make sure the Azure CLI is latest version
-# az upgrade
-#
-# Make sure the containerapp and rdbms-connect extensions are installed and current
-# az extension add --name containerapp --upgrade
-# az extension add --name rdbms-connect --upgrade
-
 # Define values.
 
 echo "Where is the code located? (Use . for current directory.)"
@@ -71,19 +64,9 @@ az postgres flexible-server create \
    --location $LOCATION \
    --admin-user $ADMIN_USER \
    --admin-password $ADMIN_PASSWORD \
-   --active-directory-auth Enabled \
-   --tier burstable \
-   --sku-name Standard_B1ms \
+   --sku-name Standard_D2s_v3 \
    --public-access 0.0.0.0
 echo "INFO:: Created PostgreSQL database server: $POSTGRESQL_NAME."
-
-# Add signed-in user as Microsoft Entra admin on the server
-
-az postgres flexible-server ad-admin create \
-   --resource-group $RESOURCE_GROUP \
-   --server-name $POSTGRESQL_NAME  \
-   --display-name $(az ad signed-in-user show --query mail --output tsv) \
-   --object-id $(az ad signed-in-user show --query id --output tsv)
 
 # Create a database on the PostgreSQL server.
 
@@ -93,32 +76,7 @@ az postgres flexible-server db create \
    --database-name restaurants_reviews
 echo "INFO:: Completed creating database restaurants_reviews on PostgreSQL server: $POSTGRESQL_NAME."
 
-# Create a user-assigned managed identity named my-ua-managed-id to access database
-
-az identity create \
-   --name my-ua-managed-id \
-   --resource-group pythoncontainer-rg
-
-# Add user assigned managed identity as role on server (requires rdbms-connect extension for token)
-
-az postgres flexible-server execute \
-    --name $POSTGRESQL_NAME \
-    --database-name postgres \
-    --querytext "select * from pgaadauth_create_principal('"my-ua-managed-id"', false, false);select * from pgaadauth_list_principals(false);" \
-    --admin-user $(az ad signed-in-user show --query mail --output tsv) \
-    --admin-password $(az account get-access-token --resource-type oss-rdbms --output tsv --query accessToken)
-
-# Grant the user assigned managed identity necessary permissions on restaurants_reviews database (requires rdbms-connect extension for token)
-
-az postgres flexible-server execute \
-    --name $POSTGRESQL_NAME \
-    --database-name restaurants_reviews \
-    --querytext "GRANT CONNECT ON DATABASE restaurants_reviews TO \"my-ua-managed-id\";GRANT USAGE ON SCHEMA public TO \"my-ua-managed-id\";GRANT CREATE ON SCHEMA public TO \"my-ua-managed-id\";GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO \"my-ua-managed-id\";ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO \"my-ua-managed-id\";" \
-    --admin-user $(az ad signed-in-user show --query mail --output tsv) \
-    --admin-password $(az account get-access-token --resource-type oss-rdbms --output tsv --query accessToken)
-
-
-# Deploy (requires containerapp extension)
+# Deploy (make sure extension is added)
 
 # Create a container apps environment.
 
@@ -133,14 +91,9 @@ echo "INFO:: Completed creating container apps environment: $CONTAINER_ENV_NAME.
 ACR_USERNAME=$(az acr credential show --name $REGISTRY_NAME --query username --output tsv)
 ACR_PASSWORD=$(az acr credential show --name $REGISTRY_NAME --query passwords[0].value --output tsv)
 
-# Get client ID for user assigned managed identity
-
-MID_CLIENT_ID=$(az identity show --name my-ua-managed-id --resource-group $RESOURCE_GROUP --query clientId --output tsv)
-MID_RESOURCE_ID=$(az identity show --name my-ua-managed-id --resource-group $RESOURCE_GROUP --query id --output tsv)
-
 # Create container app.
 
-ENV_VARS="DBHOST=$POSTGRESQL_NAME DBNAME=restaurants_reviews DBUSER=my-ua-managed-id RUNNING_IN_PRODUCTION=1"
+ENV_VARS="AZURE_POSTGRESQL_HOST=$POSTGRESQL_NAME.postgres.database.azure.com AZURE_POSTGRESQL_DATABASE=restaurants_reviews AZURE_POSTGRESQL_USERNAME=$ADMIN_USER AZURE_POSTGRESQL_PASSWORD=$ADMIN_PASSWORD RUNNING_IN_PRODUCTION=1"
 echo $ENV_VARS
 
 az containerapp create \
