@@ -84,6 +84,7 @@ az postgres flexible-server ad-admin create \
    --server-name $POSTGRESQL_NAME  \
    --display-name $(az ad signed-in-user show --query mail --output tsv) \
    --object-id $(az ad signed-in-user show --query id --output tsv)
+echo "INFO:: Made current user a Microsoft Entra admin on PostgreSQL server: $POSTGRESQL_NAME."
 
 # Create a database on the PostgreSQL server.
 
@@ -98,6 +99,7 @@ echo "INFO:: Completed creating database restaurants_reviews on PostgreSQL serve
 az identity create \
    --name my-ua-managed-id \
    --resource-group $RESOURCE_GROUP
+echo "INFO:: Created user-assigned managed identity named my-ua-managed-identity in resource group: $RESOURCE_GROUP."
 
 # Add user assigned managed identity as role on server (requires rdbms-connect extension for token)
 
@@ -107,6 +109,7 @@ az postgres flexible-server execute \
     --querytext "select * from pgaadauth_create_principal('"my-ua-managed-id"', false, false);select * from pgaadauth_list_principals(false);" \
     --admin-user $(az ad signed-in-user show --query mail --output tsv) \
     --admin-password $(az account get-access-token --resource-type oss-rdbms --output tsv --query accessToken)
+echo "INFO:: Added  managed identity, my-ua-managed-identity, as a ROLE on PostgreSQL server: $POSTGRESQL_NAME."
 
 # Grant the user assigned managed identity necessary permissions on restaurants_reviews database (requires rdbms-connect extension for token)
 
@@ -116,6 +119,7 @@ az postgres flexible-server execute \
     --querytext "GRANT CONNECT ON DATABASE restaurants_reviews TO \"my-ua-managed-id\";GRANT USAGE ON SCHEMA public TO \"my-ua-managed-id\";GRANT CREATE ON SCHEMA public TO \"my-ua-managed-id\";GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO \"my-ua-managed-id\";ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO \"my-ua-managed-id\";" \
     --admin-user $(az ad signed-in-user show --query mail --output tsv) \
     --admin-password $(az account get-access-token --resource-type oss-rdbms --output tsv --query accessToken)
+echo "INFO:: Granted  managed identity, my-ua-managed-identity, necessary permisions on restaurants_reviews database."
 
 
 # Deploy (requires containerapp extension)
