@@ -3,10 +3,10 @@
 # This script creates the resources used in the tutorial https://learn.microsoft.com/azure/developer/python/tutorial-deploy-python-web-app-azure-container-apps-01
 # Make sure you are logged in to Azure. If unsure, run "az login" before using this script.
 
-# Make sure the Azure CLI is latest version
-# az upgrade
+# Make sure the the Azure CLI is up to date and that 
+# the containerapp and rdbms-connect extensions are installed and current
 #
-# Make sure the containerapp and rdbms-connect extensions are installed and current
+# az upgrade
 # az extension add --name containerapp --upgrade
 # az extension add --name rdbms-connect --upgrade
 
@@ -41,7 +41,7 @@ CONTAINER_APP_NAME="python-container-app"
 az group create \
 --name $RESOURCE_GROUP \
 --location $LOCATION
-echo "INFO:: Created resource group: $RESOURE_GROUP."
+echo "INFO:: Created resource group: $RESOURCE_GROUP."
 
 # Create a container registry.
 
@@ -140,7 +140,7 @@ MID_RESOURCE_ID=$(az identity show --name my-ua-managed-id --resource-group $RES
 
 # Create container app.
 
-ENV_VARS="DBHOST=$POSTGRESQL_NAME DBNAME=restaurants_reviews DBUSER=my-ua-managed-id RUNNING_IN_PRODUCTION=1"
+ENV_VARS="DBHOST=$POSTGRESQL_NAME DBNAME=restaurants_reviews DBUSER=my-ua-managed-id RUNNING_IN_PRODUCTION=1 AZURE_CLIENT_ID=$MID_CLIENT_ID"
 echo $ENV_VARS
 
 az containerapp create \
@@ -154,6 +154,7 @@ az containerapp create \
 --registry-server $REGISTRY_NAME.azurecr.io \
 --registry-username $ACR_USERNAME \
 --registry-password $ACR_PASSWORD \
+--user-assigned $MID_RESOURCE_ID \
 --env-vars $ENV_VARS \
 --query properties.configuration.ingress.fqdn
 echo "INFO:: Completed creating container app $CONTAINER_APP_NAME."
