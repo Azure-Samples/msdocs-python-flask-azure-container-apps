@@ -137,7 +137,7 @@ echo "INFO:: Completed creating container apps environment: $CONTAINER_ENV_NAME.
 ACR_USERNAME=$(az acr credential show --name $REGISTRY_NAME --query username --output tsv)
 ACR_PASSWORD=$(az acr credential show --name $REGISTRY_NAME --query passwords[0].value --output tsv)
 
-# Get client ID for user assigned managed identity
+# Get client ID and resource ID for user assigned managed identity
 
 MID_CLIENT_ID=$(az identity show --name my-ua-managed-id --resource-group $RESOURCE_GROUP --query clientId --output tsv)
 MID_RESOURCE_ID=$(az identity show --name my-ua-managed-id --resource-group $RESOURCE_GROUP --query id --output tsv)

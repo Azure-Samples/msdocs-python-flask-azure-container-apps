@@ -14,7 +14,7 @@ This Python web app repo can also be used in other ways:
     python -c 'import secrets; print(secrets.token_hex())'
     ```
 
-* You can create a container locally and run it in Docker locally. You'll need Docker Desktop installed. For this scenario, set REMOTE_POSTGRESQL=1 in *.env* file to point to a PostgreSQL instance. See the *.env.example* file for details.
+* You can create a container locally and run it in Docker locally. You need Docker Desktop installed. For this scenario, set REMOTE_POSTGRESQL=1 and set other environment variables in a *.env* file to point to a PostgreSQL server instance in Azure. You also need to create an application service principal, add it as a PostgreSQL ROLE to the server, and grant it necessary permissions on the database. See the *.env.example* file for details.
 
   ```bash
   docker build --file Dockerfile --tag pythoncontainer:latest .
