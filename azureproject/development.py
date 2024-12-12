@@ -10,7 +10,7 @@ if 'USE_REMOTE_POSTGRESQL' in os.environ:
     DATABASE_URI = 'postgresql+psycopg2://{dbuser}:{dbpass}@{dbhost}/{dbname}'.format(
         dbuser=os.environ['DBUSER'],
         dbpass='PASSWORDORTOKEN',
-        dbhost=os.environ['DBHOST'] +  + ".postgres.database.azure.com",
+        dbhost=os.environ['DBHOST'] + ".postgres.database.azure.com",
         dbname=os.environ['DBNAME']
     )
 else:
