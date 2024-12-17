@@ -9,5 +9,5 @@ def get_conn():
     azure_credential = DefaultAzureCredential()
     # Get token for Azure Database for PostgreSQL
     token = azure_credential.get_token("https://ossrdbms-aad.database.windows.net/.default")
-    conn = str(current_app.config.get('DATABASE_URI')).replace('PASSWORDORTOKEN', token.token)
+    conn = current_app.config.get('DATABASE_URI').replace('PASSWORDORTOKEN', token.token)
     return conn
