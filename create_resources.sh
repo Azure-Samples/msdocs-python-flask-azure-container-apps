@@ -99,7 +99,7 @@ echo "INFO:: Completed creating database restaurants_reviews on PostgreSQL serve
 az identity create \
    --name my-ua-managed-id \
    --resource-group $RESOURCE_GROUP
-echo "INFO:: Created user-assigned managed identity named my-ua-managed-identity in resource group: $RESOURCE_GROUP."
+echo "INFO:: Created user-assigned managed identity named my-ua-managed-id in resource group: $RESOURCE_GROUP."
 
 # Add user assigned managed identity as role on server (requires rdbms-connect extension for token)
 

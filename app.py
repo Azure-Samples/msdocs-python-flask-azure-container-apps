@@ -1,14 +1,15 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from flask_wtf.csrf import CSRFProtect
-from datetime import datetime
 import os
 import uuid
-from azureproject.get_conn import get_conn
+from datetime import datetime
 
-
+from flask import (Flask, redirect, render_template, request,
+                   send_from_directory, url_for)
+from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
+from flask_wtf.csrf import CSRFProtect
 from requests import RequestException
+
+from azureproject.get_conn import get_conn
 
 app = Flask(__name__, static_folder='static')
 csrf = CSRFProtect(app)
@@ -38,6 +39,7 @@ migrate = Migrate(app, db)
 # Create databases, if databases exists doesn't issue create
 # For schema changes, run "flask db migrate"
 from models import Restaurant, Review
+
 with app.app_context():
     db.create_all()
     db.session.commit()
