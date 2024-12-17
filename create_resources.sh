@@ -63,6 +63,13 @@ az acr build \
 --image $IMAGE_NAME $CODE_LOCATION
 echo "INFO:: Completed building image: $IMAGE_NAME."
 
+# Create a user-assigned managed identity named my-ua-managed-id to access database
+
+az identity create \
+   --name my-ua-managed-id \
+   --resource-group $RESOURCE_GROUP
+echo "INFO:: Created user-assigned managed identity named my-ua-managed-id in resource group: $RESOURCE_GROUP."
+
 # Create PostgreSQL database server.
 
 az postgres flexible-server create \
@@ -93,13 +100,6 @@ az postgres flexible-server db create \
    --server-name $POSTGRESQL_NAME \
    --database-name restaurants_reviews
 echo "INFO:: Completed creating database restaurants_reviews on PostgreSQL server: $POSTGRESQL_NAME."
-
-# Create a user-assigned managed identity named my-ua-managed-id to access database
-
-az identity create \
-   --name my-ua-managed-id \
-   --resource-group $RESOURCE_GROUP
-echo "INFO:: Created user-assigned managed identity named my-ua-managed-id in resource group: $RESOURCE_GROUP."
 
 # Add user assigned managed identity as role on server (requires rdbms-connect extension for token)
 
